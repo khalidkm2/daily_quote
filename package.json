@@ -29,7 +29,9 @@
     },
     "homepage": "https://github.com/khalidkm2/daily_quote#readme",
     "dependencies": {
-        "express": "^5.1.0"
+        "@prisma/client": "^6.15.0",
+        "express": "^5.1.0",
+        "prisma": "^6.15.0"
     },
     "devDependencies": {
         "@eslint/js": "^9.35.0",
