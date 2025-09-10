@@ -4,7 +4,9 @@ import express from "express"
 
 const router = express.Router()
 
-router.post("/signUp",signUp)
-router.post("/signIn", signIn)
+
+router.post("/signup",signUp)
+router.post("/signin", signIn)
+
 
 export default router

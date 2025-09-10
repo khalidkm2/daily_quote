@@ -1,6 +1,8 @@
 import { prisma } from "#config/db.js";
-import { signInData, signUpData } from "#types.js";
+import { signInData, signUpData, userData } from "#utils/types.js";
 import { RequestHandler } from "express";
+import * as bcrypt from 'bcrypt';
+import { generateJwtToken } from "#utils/helper.js";
 
 
 
@@ -8,7 +10,7 @@ export const signUp:RequestHandler = async(req,res) => {
     try {
         const {name,email,password}:signUpData = req.body;
         console.log("inside signup controller ")
-        if(!email || !password){
+        if(!email || !password || !name){
             return res.status(400).json({message:"all fields are required"})
         }
         const user = await prisma.user.findUnique({
@@ -19,9 +21,9 @@ export const signUp:RequestHandler = async(req,res) => {
         if(user){
             return res.status(400).json({message:"user already exists go to login"})
         }
-        // const hashedPassword = 
+        const hashedPassword = await bcrypt.hash(password,10);
         const newUser = await prisma.user.create({
-            data:{name,email,password}
+            data:{name,email,password:hashedPassword}
         })
 
         if(!newUser){
@@ -40,7 +42,7 @@ export const signUp:RequestHandler = async(req,res) => {
 export const signIn: RequestHandler = async(req,res) => {
     const {email,password}:signInData = req.body;
     try {
-        const user = await prisma.user.findUnique({
+        const user:userData | null = await prisma.user.findUnique({
             where:{
                 email:email
             }
@@ -49,8 +51,23 @@ export const signIn: RequestHandler = async(req,res) => {
             return res.status(400).json({message:"username not found. please signup first"})
         }
         //check password
+        const result = await bcrypt.compare(password,user.password);
+        if(!result){
+            return res.status(401).json({message:"password is incorrect"})
+        }
         // create jwt token
+        const newToken = generateJwtToken({id:user.id,name:user.name,email:user.email})
+
+        const {password:_,...filteredUser} = user;
+
         // set cookie
+        res.status(200).cookie("token",newToken,{httpOnly:true,secure:process.env.NODE_ENV === "production"}).json({
+            message:"signin successfully",
+            data: filteredUser
+        })
+
+        //send response
+
 
     } catch (error) {
          console.log(error);
