@@ -15,11 +15,18 @@ app.use(cookieParser());
 
 const port = process.env.PORT ?? "9001";
 
-
-cron.schedule("*/10 * * * *",async function(){
+// running every minute
+cron.schedule("* * * * *",async function(){
 try {
    //get quote
    let quote = await getRandomQuote();
+   if(!quote){
+     quote = {
+      id:999,
+      author:"khalid",
+      text:"all is well"
+     }
+   }
   
    // get users
    const emails = await getAllUsersMail();
@@ -29,7 +36,7 @@ try {
 
   for(const batch of chunks){
 
-    await Promise.all(batch.map(mail => sendMail(mail)))
+    await Promise.all(batch.map(mail => sendMail(mail,quote)))
 
     // optional use sleep
   }

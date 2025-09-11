@@ -20,6 +20,9 @@ model User {
   email String @unique
   password String
   createdAt DateTime @default(now())
+  preferredHour Int
+  preferredMinute Int
+  timezone String
 }
 
 model Quote {

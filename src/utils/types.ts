@@ -15,7 +15,10 @@ export interface userData {
     name: string,
     email: string,
     password: string,
-    createdAt: Date
+    createdAt: Date,
+    preferredHour: number,
+    preferredMinute: number,
+    timezone: string
 }
 
 export interface Quote {

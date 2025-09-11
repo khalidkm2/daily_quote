@@ -1,4 +1,7 @@
+import { User } from "#generated/prisma/index.js";
 import jwt from "jsonwebtoken"
+import {DateTime} from "luxon";
+import { userData } from "./types.js";
 
 interface userPayload{
      id: number,
@@ -18,4 +21,14 @@ export function chunkArray<T>(arr:T[],size:number){
         result.push(arr.slice(i,i+size))
     }
     return result;
+}
+
+export function isUserPreferredTime(user:userData){
+    const nowUTC = DateTime.utc()
+    const userNow = nowUTC.setZone(user.timezone);
+    return (
+        userNow.hour === user.preferredHour && 
+        userNow.minute === user.preferredMinute
+    );
+    
 }

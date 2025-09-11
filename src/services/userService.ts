@@ -10,3 +10,16 @@ export const getAllUsersMail = async() => {
     })
     return users
 }
+
+export const getPreferredUsers = async() => {
+    const now = new Date();
+    const hour = now.getUTCHours();
+    const minute = now.getUTCMinutes();
+
+//     const users = await prisma.user.findMany({
+//         where: {
+//          preferredHour: hour,
+//          preferredMinute: minute
+//   }
+// });
+}
