@@ -1,5 +1,6 @@
 import express from "express";
-import userRouter from "./routes/userRoute.js"
+import userRouter from "./routes/userRoute.js";
+import quoteRouter from "./routes/quoteRoute.js";
 import cookieParser from "cookie-parser";
 import { sendMail } from "#utils/mail.js";
 import cron from "node-cron";
@@ -49,7 +50,8 @@ try {
 })
 
 //userRoutes
-app.use("/api/v1",userRouter);
+app.use("/api/v1/user",userRouter);
+app.use("/api/v1/quote",quoteRouter);
 
 
 
