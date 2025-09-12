@@ -27,3 +27,16 @@ export interface Quote {
     author: string,
     
 }
+
+export interface UserPreferedData {
+    email: string,
+    preferredMinute: number | null,
+    preferredHour: number | null,
+    timezone: string | null
+}
+
+export interface updateTimeData {
+  preferredMinute: number;
+  preferredHour: number;
+  timezone: string;
+}

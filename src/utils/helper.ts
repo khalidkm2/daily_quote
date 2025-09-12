@@ -1,16 +1,16 @@
-import { User } from "#generated/prisma/index.js";
 import jwt from "jsonwebtoken"
 import {DateTime} from "luxon";
-import { userData } from "./types.js";
+import { userData, UserPreferedData } from "./types.js";
+import { User } from "@prisma/client";
 
-interface userPayload{
+export interface userPayload{
      id: number,
      name: string,
      email: string,
 }
 
 export function generateJwtToken(user:userPayload){
-    const token = jwt.sign(user,"daily_quote",{expiresIn:"7d"})
+    const token = jwt.sign(user,getEnv("SECRET_KEY"),{expiresIn:"7d"})
     return token;
 
 }
@@ -23,7 +23,10 @@ export function chunkArray<T>(arr:T[],size:number){
     return result;
 }
 
-export function isUserPreferredTime(user:userData){
+export function isUserPreferredTime(user:UserPreferedData){
+    if(!user.timezone){
+        return false
+    }
     const nowUTC = DateTime.utc()
     const userNow = nowUTC.setZone(user.timezone);
     return (
@@ -32,3 +35,11 @@ export function isUserPreferredTime(user:userData){
     );
     
 }
+
+
+export function getEnv(key: string): string {
+  const value = process.env[key];
+  if (!value) throw new Error(`Missing env variable ${key}`);
+  return value;
+}
+

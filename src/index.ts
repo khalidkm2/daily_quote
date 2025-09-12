@@ -4,8 +4,8 @@ import cookieParser from "cookie-parser";
 import { sendMail } from "#utils/mail.js";
 import cron from "node-cron";
 import { getRandomQuote } from "#services/quoteService.js";
-import { getAllUsersMail } from "#services/userService.js";
-import { chunkArray } from "#utils/helper.js";
+import { getAllUsers } from "#services/userService.js";
+import { chunkArray, isUserPreferredTime } from "#utils/helper.js";
 
 const app = express();
 
@@ -29,16 +29,18 @@ try {
    }
   
    // get users
-   const emails = await getAllUsersMail();
-   
-   //send to all user
-  const chunks = chunkArray(emails,50)
+   const allUsers = await getAllUsers()
+   const usersToSend = allUsers.filter((user) => isUserPreferredTime(user))
+   console.log(usersToSend)
+   //send to all preferred user
+  const chunks = chunkArray(usersToSend,50)
 
   for(const batch of chunks){
 
     await Promise.all(batch.map(mail => sendMail(mail,quote)))
 
     // optional use sleep
+    // add indexes / nextSendTime approach
   }
 
 } catch (error) {

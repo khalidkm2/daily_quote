@@ -1,8 +1,9 @@
 import { prisma } from "#config/db.js";
-import { signInData, signUpData, userData } from "#utils/types.js";
+import { signInData, signUpData, updateTimeData, userData } from "#utils/types.js";
 import { RequestHandler } from "express";
 import * as bcrypt from 'bcrypt';
 import { generateJwtToken } from "#utils/helper.js";
+import { User } from "@prisma/client";
 
 
 
@@ -42,7 +43,7 @@ export const signUp:RequestHandler = async(req,res) => {
 export const signIn: RequestHandler = async(req,res) => {
     const {email,password}:signInData = req.body;
     try {
-        const user:userData | null = await prisma.user.findUnique({
+        const user:User | null = await prisma.user.findUnique({
             where:{
                 email:email
             }
@@ -72,5 +73,28 @@ export const signIn: RequestHandler = async(req,res) => {
     } catch (error) {
          console.log(error);
         return res.status(500).json({message:"failed to sign in"})
+    }
+}
+
+
+
+export const updateTime:RequestHandler = async(req,res) => {
+    try {
+       const {preferredMinute,preferredHour,timezone}:updateTimeData = req.body;
+        const updatedUser = await prisma.user.update({
+            where:{id:req.user?.id},
+            data:{
+                preferredHour,
+                preferredMinute,
+                timezone
+            },
+            
+        })
+        if(!updatedUser){
+            return res.status(400).json({message:"data invalid"})
+        }
+        return res.status(200).json({message:"updated successfully"})
+    } catch (error) {
+        return res.status(500).json({message:"failed to update the user"})
     }
 }

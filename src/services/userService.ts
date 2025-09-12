@@ -1,4 +1,5 @@
 import { prisma } from "#config/db.js"
+import { User } from "@prisma/client"
 
 
 
@@ -11,15 +12,25 @@ export const getAllUsersMail = async() => {
     return users
 }
 
-export const getPreferredUsers = async() => {
-    const now = new Date();
-    const hour = now.getUTCHours();
-    const minute = now.getUTCMinutes();
+export const getAllUsers = async() => {
+    // const now = new Date();
+    // const hour = now.getUTCHours();
+    // const minute = now.getUTCMinutes();
 
-//     const users = await prisma.user.findMany({
-//         where: {
-//          preferredHour: hour,
-//          preferredMinute: minute
-//   }
-// });
+    const users = await prisma.user.findMany({
+        where: {
+         preferredHour: {not:null},
+         preferredMinute: {not:null},
+         timezone:{not:null}
+        },
+        select:{
+            email:true,
+            preferredHour:true,
+            preferredMinute:true,
+            timezone:true
+        }
+        
+
+});
+    return users;
 }
